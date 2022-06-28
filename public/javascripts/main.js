@@ -8,20 +8,25 @@ ml5 Example
 Real time Object Detection using objectDetector
 === */
 
+import './kakaoTTS.js'
+
 let objectDetector;
 let objects = [];
 let video;
+let audio;
 let canvas, ctx;
 const width = 480;
 const height = 360;
 
+
 async function make() {
     video = await getVideo();
-
+    audio = await kakaoTTS.createAudio();
     objectDetector = await ml5.objectDetector('cocossd', startDetecting)
 
     canvas = createCanvas(width, height);
     ctx = canvas.getContext('2d');
+
 }
 
 window.addEventListener('DOMContentLoaded', function() {
@@ -48,6 +53,8 @@ function detect() {
 
         // detect();
         setTimeout(() =>{
+            // objects.forEach(object => kakaoTTS.kakaoTTS(object.label))
+            // kakaoTTS.kakaoTTS(); >> object의 label들을 전달하면 tts로 전달.
             detect();
         },1000)
     });
@@ -95,7 +102,6 @@ async function getVideo() {
 
     return videoElement
 }
-
 
 function createCanvas(w, h){
     const canvas = document.createElement("canvas");
