@@ -8,7 +8,7 @@ ml5 Example
 Real time Object Detection using objectDetector
 === */
 
-import './kakaoTTS.js'
+import kakaoTTS from "./kakaoTTS.js"
 
 let objectDetector;
 let objects = [];
@@ -20,13 +20,13 @@ const height = 360;
 
 
 async function make() {
+    console.log("make")
     video = await getVideo();
-    audio = await kakaoTTS.createAudio();
+    audio = await kakaoTTS.getAudio();
     objectDetector = await ml5.objectDetector('cocossd', startDetecting)
 
     canvas = createCanvas(width, height);
     ctx = canvas.getContext('2d');
-
 }
 
 window.addEventListener('DOMContentLoaded', function() {

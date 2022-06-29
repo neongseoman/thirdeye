@@ -1,18 +1,11 @@
-const config = import('../../config/kakaoAPIconfig.js')
+const config = import('../../src/config/kakaoAPIconfig.js')
 const kakaoAPI = config.RESTAPI
-
-let request = import('request');
-
-function createAudio() {
-    const audioTag = document.createElement("audio")
-    audioTag.src="objectLabel"
-    audioTag.type="type/mpeg"
-    document.body.appendChild(canvas);
-    return audioTag
-}
+import {request} from "express";
 
 function getAudio(){
     const audioTag = document.getElementById("audiotts")
+    audioTag.src="objectLabel"
+    audioTag.type="type/mpeg"
     return audioTag
 }
 
@@ -43,4 +36,4 @@ function kakaoTTSres(...labels) {
 
 kakaoTTSres('사람','차','책')
 
-export {createAudio,getAudio,kakaoTTSres}
+export {getAudio,kakaoTTSres}
