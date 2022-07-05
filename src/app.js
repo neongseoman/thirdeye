@@ -1,12 +1,16 @@
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+import express from 'express';
+import path from 'path';
+import cookieParser from 'cookie-parser';
+import logger from 'morgan';
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+import indexRouter from './routes/index.js';
+import usersRouter from './routes/users.js';
 
-var app = express();
+let app = express();
+const __dirname = path.resolve();
+
+app.set('view engine', 'ejs'); //'ejs'탬플릿을 엔진으로 한다.
+app.set('views', path.join(__dirname, 'src/public/views')); //폴더, 폴더경로 지정
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -17,4 +21,4 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-module.exports = app;
+export default app;
