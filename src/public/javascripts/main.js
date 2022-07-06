@@ -14,7 +14,6 @@ const kakaoAPI = require('../../kakaoAPIconfig.js').RESTAPI
 let objectDetector;
 let objects = [];
 let video;
-let audio;
 let canvas, ctx;
 const width = 480;
 const height = 360;
@@ -23,7 +22,6 @@ const height = 360;
 async function make() {
     console.log("make")
     video = await getVideo();
-    audio = await kakaoTTS.getAudio();
     objectDetector = await ml5.objectDetector('cocossd', startDetecting)
 
     canvas = createCanvas(width, height);
@@ -56,8 +54,7 @@ function detect() {
 
         // detect();
         setTimeout(() =>{
-            kakaoTTS(labels)
-
+            kakaoTTS(labels),
             detect();
         },3000)
     });
@@ -135,6 +132,7 @@ async function kakaoTTS(...labels) {
     //
     //     // print(response.json())
     // });
+
     try {
         const {data} = await axios.post('https://kakaoi-newtone-openapi.kakao.com/v1/synthesize', text,{
             headers:{
