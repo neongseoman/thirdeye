@@ -7,8 +7,9 @@
 ml5 Example
 Real time Object Detection using objectDetector
 === */
-
-import kakaoTTS from "./kakaoTTS.js"
+// const request = require('request');
+const axios = require('axios');
+const kakaoAPI = require('../../kakaoAPIconfig.js').RESTAPI
 
 let objectDetector;
 let objects = [];
@@ -39,6 +40,7 @@ function startDetecting(){
 }
 
 function detect() {
+    let labels = []
     objectDetector.detect(video, function(err, results) {
         if(err){
             console.log(err);
@@ -47,16 +49,17 @@ function detect() {
         objects = results;
 
         if(objects){
+            objects.forEach(object => labels.push(object['label']))
             draw();
             console.log(objects)
         }
 
         // detect();
         setTimeout(() =>{
-            // objects.forEach(object => kakaoTTS.kakaoTTS(object.label))
-            // kakaoTTS.kakaoTTS(); >> object의 label들을 전달하면 tts로 전달.
+            kakaoTTS(labels)
+
             detect();
-        },1000)
+        },3000)
     });
 }
 
@@ -109,4 +112,46 @@ function createCanvas(w, h){
     canvas.height = h;
     document.body.appendChild(canvas);
     return canvas;
+}
+
+async function kakaoTTS(...labels) {
+
+    let text = '<speak> 전방에 ' + labels + '이 있습니다 </speak>'
+    console.log(text)
+    // let options = {
+    //     'method': 'POST',
+    //     'url': 'https://kakaoi-newtone-openapi.kakao.com/v1/synthesize',
+    //     'headers': {
+    //         'Content-Type': 'application/xml',
+    //         'Authorization': `KakaoAK ${kakaoAPI}`
+    //     },
+    //     'body' : text
+    // };
+    //
+    // request(options, function (error, response) {
+    //     if (error) throw new Error(error);
+    //     console.log(JSON.stringify(response.headers));
+    //     audio.src = response.body;
+    //
+    //     // print(response.json())
+    // });
+    try {
+        const {data} = await axios.post('https://kakaoi-newtone-openapi.kakao.com/v1/synthesize', text,{
+            headers:{
+                'Content-Type': 'application/xml',
+                'Authorization': `KakaoAK ${kakaoAPI}`
+            },
+            responseType:"arraybuffer"
+        })
+        const context = new AudioContext();
+        context.decodeAudioData(data, buffer => {
+            const source = context.createBufferSource();
+            source.buffer = buffer;
+            source.connect(context.destination);
+            source.start(0);
+        });
+    } catch (e) {
+        console.error(e.message);
+    }
+
 }
