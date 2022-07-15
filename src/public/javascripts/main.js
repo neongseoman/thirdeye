@@ -49,7 +49,7 @@ function detect() {
         if(objects){
             objects.forEach(object => labels.push(object['label']))
             draw();
-            console.log(objects)
+            // console.log(objects)
         }
 
         // detect();
