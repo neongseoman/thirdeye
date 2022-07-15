@@ -2232,7 +2232,7 @@ function detect() {
         if(objects){
             objects.forEach(object => labels.push(object['label']))
             draw();
-            console.log(objects)
+            // console.log(objects)
         }
 
         // detect();
@@ -2275,8 +2275,8 @@ async function getVideo() {
     // Create a webcam capture
     let constraints = {
         // this is cellphone rear camera
-        // audio: false, video: { facingMode: { exact: "environment" } }
-        audio: false, video: true
+        audio: false, video: { facingMode: { exact: "environment" } }
+        // audio: false, video: true
     };
 
     const capture = await navigator.mediaDevices.getUserMedia(constraints)
