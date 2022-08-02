@@ -8,8 +8,8 @@ ml5 Example
 Real time Object Detection using objectDetector
 === */
 // const request = require('request');
-const axios = require('axios');
-const kakaoAPI = require('../../kakaoAPIconfig.js').RESTAPI
+// const axios = require('axios');
+const kakaoAPI = "84d9fc9de601a400e5348cc64173f9bb"
 
 let objectDetector;
 let objects = [];
@@ -92,8 +92,8 @@ async function getVideo() {
     // Create a webcam capture
     let constraints = {
         // this is cellphone rear camera
-        audio: false, video: { facingMode: { exact: "environment" } }
-        // audio: false, video: true
+        // audio: false, video: { facingMode: { exact: "environment" } }
+        audio: false, video: true
     };
 
     const capture = await navigator.mediaDevices.getUserMedia(constraints)
