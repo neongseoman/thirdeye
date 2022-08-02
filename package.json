@@ -7,7 +7,7 @@
   },
   "engines": {
     "node": "^17.8.0",
-    "npm" : "^8.5.5"
+    "npm": "^8.5.5"
   },
   "dependencies": {
     "axios": "^0.27.2",
@@ -16,7 +16,8 @@
     "express": "~4.16.1",
     "morgan": "~1.9.1",
     "nodemon": "^2.0.18",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "ejs": "^3.1.8"
   },
   "devDependencies": {
     "ejs": "^3.1.8"
