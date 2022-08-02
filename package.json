@@ -10,12 +10,14 @@
     "npm" : "^8.5.5"
   },
   "dependencies": {
+    "@nestjs/axios": "^0.1.0",
     "axios": "^0.27.2",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
+    "dotenv": "^16.0.1",
     "express": "~4.16.1",
     "morgan": "~1.9.1",
-    "nodemon": "^2.0.18",
+    "nodemon": "^2.0.19",
     "request": "^2.88.2"
   },
   "devDependencies": {

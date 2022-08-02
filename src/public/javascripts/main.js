@@ -7,9 +7,6 @@
 ml5 Example
 Real time Object Detection using objectDetector
 === */
-// const request = require('request');
-const axios = require('axios');
-const kakaoAPI = require('../../kakaoAPIconfig.js').RESTAPI
 
 let objectDetector;
 let objects = [];
@@ -17,6 +14,7 @@ let video;
 let canvas, ctx;
 const width = 480;
 const height = 360;
+const kakaoAPI = "b1a0aa4764b0874a5f7b71ac3893c9f6"
 
 
 async function make() {
@@ -37,8 +35,8 @@ function startDetecting(){
     detect();
 }
 
-function detect() {
-    let labels = []
+async function detect() {
+    labels = []
     objectDetector.detect(video, function(err, results) {
         if(err){
             console.log(err);
@@ -46,17 +44,26 @@ function detect() {
         }
         objects = results;
 
+        objects.forEach((object) => labels.push(object.label))
+        draw()
+        // if(objects){
+        //     setTimeout(() =>{
+        //         axios.post(`http://localhost:3000/data/kakao`,
+        //             body = objects[0]
+        //         ).then((res) => {
+        //             // console.log(JSON.stringify(res))
+        //             console.log(res.data);
+        //         }).then(detect());
+        //     },3000)
+        // }
         if(objects){
-            objects.forEach(object => labels.push(object['label']))
-            draw();
-            // console.log(objects)
+            setTimeout(() =>{
+                await kakaoTTS(labels)
+            },3000,
+                detect())
         }
 
         // detect();
-        setTimeout(() =>{
-            kakaoTTS(labels),
-            detect();
-        },3000)
     });
 }
 
@@ -82,8 +89,7 @@ function draw(){
 
 // Helper Functions
 async function getVideo() {
-    // Grab elements, create settings, etc.
-    const videoElement = document.createElement('video');
+    const videoElement = document.getElementById('cameraVideo');
     videoElement.setAttribute("style", "display: none;");
     videoElement.width = width;
     videoElement.height = height;
@@ -91,9 +97,7 @@ async function getVideo() {
 
     // Create a webcam capture
     let constraints = {
-        // this is cellphone rear camera
-        audio: false, video: { facingMode: { exact: "environment" } }
-        // audio: false, video: true
+        audio: false, video: true
     };
 
     const capture = await navigator.mediaDevices.getUserMedia(constraints)
@@ -115,23 +119,6 @@ async function kakaoTTS(...labels) {
 
     let text = '<speak> 전방에 ' + labels + '이 있습니다 </speak>'
     console.log(text)
-    // let options = {
-    //     'method': 'POST',
-    //     'url': 'https://kakaoi-newtone-openapi.kakao.com/v1/synthesize',
-    //     'headers': {
-    //         'Content-Type': 'application/xml',
-    //         'Authorization': `KakaoAK ${kakaoAPI}`
-    //     },
-    //     'body' : text
-    // };
-    //
-    // request(options, function (error, response) {
-    //     if (error) throw new Error(error);
-    //     console.log(JSON.stringify(response.headers));
-    //     audio.src = response.body;
-    //
-    //     // print(response.json())
-    // });
 
     try {
         const {data} = await axios.post('https://kakaoi-newtone-openapi.kakao.com/v1/synthesize', text,{
@@ -141,6 +128,7 @@ async function kakaoTTS(...labels) {
             },
             responseType:"arraybuffer"
         })
+
         const context = new AudioContext();
         context.decodeAudioData(data, buffer => {
             const source = context.createBufferSource();
