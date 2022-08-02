@@ -115,23 +115,6 @@ async function kakaoTTS(...labels) {
 
     let text = '<speak> 전방에 ' + labels + '이 있습니다 </speak>'
     console.log(text)
-    // let options = {
-    //     'method': 'POST',
-    //     'url': 'https://kakaoi-newtone-openapi.kakao.com/v1/synthesize',
-    //     'headers': {
-    //         'Content-Type': 'application/xml',
-    //         'Authorization': `KakaoAK ${kakaoAPI}`
-    //     },
-    //     'body' : text
-    // };
-    //
-    // request(options, function (error, response) {
-    //     if (error) throw new Error(error);
-    //     console.log(JSON.stringify(response.headers));
-    //     audio.src = response.body;
-    //
-    //     // print(response.json())
-    // });
 
     try {
         const {data} = await axios.post('https://kakaoi-newtone-openapi.kakao.com/v1/synthesize', text,{
