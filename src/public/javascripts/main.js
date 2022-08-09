@@ -7,8 +7,6 @@
 ml5 Example
 Real time Object Detection using objectDetector
 === */
-// const request = require('request');
-// const axios = require('axios');
 const kakaoAPI = "84d9fc9de601a400e5348cc64173f9bb"
 
 let objectDetector;
@@ -83,7 +81,8 @@ function draw(){
 // Helper Functions
 async function getVideo() {
     // Grab elements, create settings, etc.
-    const videoElement = document.createElement('video');
+    // const videoElement = document.createElement('video');
+    const videoElement = document.getElementById('cameraVideo');
     videoElement.setAttribute("style", "display: none;");
     videoElement.width = width;
     videoElement.height = height;
