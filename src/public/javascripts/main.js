@@ -18,6 +18,9 @@ let canvas, ctx;
 const width = 480;
 const height = 360;
 
+window.addEventListener('DOMContentLoaded', function() {
+    make();
+});
 
 async function make() {
     console.log("make")
@@ -27,10 +30,6 @@ async function make() {
     canvas = createCanvas(width, height);
     ctx = canvas.getContext('2d');
 }
-
-window.addEventListener('DOMContentLoaded', function() {
-    make();
-});
 
 function startDetecting(){
     console.log('model ready')
@@ -83,8 +82,9 @@ function draw(){
 // Helper Functions
 async function getVideo() {
     // Grab elements, create settings, etc.
-    const videoElement = document.createElement('video');
-    videoElement.setAttribute("style", "display: none;");
+    // const videoElement = document.createElement('video');
+    const videoElement = document.getElementById('cameraVideo');
+    videoElement.setAttribute("style", "display: none");
     videoElement.width = width;
     videoElement.height = height;
     document.body.appendChild(videoElement);
