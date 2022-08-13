@@ -15,24 +15,29 @@ let objectDetector;
 let objects = [];
 let video;
 let canvas, ctx;
+let constraints
+let facing = false;
+let labels = [];
 const width = 480;
 const height = 360;
 const cameraSwitchButton = document.getElementById("cameraswitch");
 const captureButton = document.getElementById('capture');
-const userAgent = window.navigator.userAgent;
-let isFacingMode = false
-let constraints = {
-            audio: false, video: true
-        }
 
 window.addEventListener('DOMContentLoaded', function() {
-    agentCheck()
     facingModeCheck();
     make();
 });
 
 
-cameraSwitchButton.addEventListener('click',cameraSwitch())
+cameraSwitchButton.addEventListener('click',()=> {
+    console.log("switch button click")
+    cameraSwitch()
+})
+
+captureButton.addEventListener('click',()=>{
+    console.log("capture button click")
+    capture();
+})
 
 function facingModeCheck(){
     if (navigator.userAgentData.mobile){
@@ -46,23 +51,29 @@ function facingModeCheck(){
         }
     }
 }
-function agentCheck(){
 
+function cameraSwitch() {
+    facing = !facing
+    constraints = {
+        audio: false, video: { facingMode: facing ? "user" : "environment" }
+    }
+    video = null;
+    make();
 }
-// function cameraSwitch() {
-//     facing = !facing
-//     constraints = {
-//         audio: false, video: { facingMode: facing? "user" : "environment" }
-//     }
-// }
 
+function capture(){
+    labels =[];
+    objects.forEach(object => labels.push(object['label']))
+    // console.log(labels)
+    kakaoTTS(labels)
+}
 
 async function make() {
     console.log("make")
     video = await getVideo();
     objectDetector = await ml5.objectDetector('cocossd', startDetecting)
 
-    canvas = createCanvas(width, height);
+    canvas = getCanvas(width, height);
     ctx = canvas.getContext('2d');
 }
 
@@ -72,7 +83,6 @@ function startDetecting(){
 }
 
 function detect() {
-    let labels = []
     objectDetector.detect(video, function(err, results) {
         if(err){
             console.log(err);
@@ -81,16 +91,11 @@ function detect() {
         objects = results;
 
         if(objects){
-            objects.forEach(object => labels.push(object['label']))
             draw();
-            console.log(objects)
+            // console.log(objects)
         }
+        detect();
 
-        // detect();
-        // setTimeout(() =>{
-        //     kakaoTTS(labels),
-        //     detect();
-        // },3000)
     });
 }
 
@@ -129,8 +134,8 @@ async function getVideo() {
     return videoElement
 }
 
-function createCanvas(w, h){
-    const canvas = document.createElement("canvas");
+function getCanvas(w, h){
+    const canvas = document.getElementById("drawCanvas");
     canvas.width  = w;
     canvas.height = h;
     document.body.appendChild(canvas);
