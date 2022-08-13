@@ -17,10 +17,45 @@ let video;
 let canvas, ctx;
 const width = 480;
 const height = 360;
+const cameraSwitchButton = document.getElementById("cameraswitch");
+const captureButton = document.getElementById('capture');
+const userAgent = window.navigator.userAgent;
+let isFacingMode = false
+let constraints = {
+            audio: false, video: true
+        }
 
 window.addEventListener('DOMContentLoaded', function() {
+    agentCheck()
+    facingModeCheck();
     make();
 });
+
+
+cameraSwitchButton.addEventListener('click',cameraSwitch())
+
+function facingModeCheck(){
+    if (navigator.userAgentData.mobile){
+        constraints = {
+            audio: false, video: {facingMode: {exact: "environment"}}
+        }
+    }
+    else {
+        constraints = {
+            audio: false, video: true
+        }
+    }
+}
+function agentCheck(){
+
+}
+// function cameraSwitch() {
+//     facing = !facing
+//     constraints = {
+//         audio: false, video: { facingMode: facing? "user" : "environment" }
+//     }
+// }
+
 
 async function make() {
     console.log("make")
@@ -48,14 +83,14 @@ function detect() {
         if(objects){
             objects.forEach(object => labels.push(object['label']))
             draw();
-            // console.log(objects)
+            console.log(objects)
         }
 
         // detect();
-        setTimeout(() =>{
-            kakaoTTS(labels),
-            detect();
-        },3000)
+        // setTimeout(() =>{
+        //     kakaoTTS(labels),
+        //     detect();
+        // },3000)
     });
 }
 
@@ -81,20 +116,11 @@ function draw(){
 
 // Helper Functions
 async function getVideo() {
-    // Grab elements, create settings, etc.
-    // const videoElement = document.createElement('video');
     const videoElement = document.getElementById('cameraVideo');
     videoElement.setAttribute("style", "display: none");
     videoElement.width = width;
     videoElement.height = height;
     document.body.appendChild(videoElement);
-
-    // Create a webcam capture
-    let constraints = {
-        // this is cellphone rear camera
-        audio: false, video: { facingMode: { exact: "environment" } }
-        // audio: false, video: true
-    };
 
     const capture = await navigator.mediaDevices.getUserMedia(constraints)
     videoElement.srcObject = capture;
