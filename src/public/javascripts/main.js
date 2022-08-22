@@ -7,28 +7,75 @@
 ml5 Example
 Real time Object Detection using objectDetector
 === */
+// const request = require('request');
+// const axios = require('axios');
 const kakaoAPI = "84d9fc9de601a400e5348cc64173f9bb"
 
 let objectDetector;
 let objects = [];
 let video;
 let canvas, ctx;
+let constraints
+let facing = false;
+let labels = [];
 const width = 480;
 const height = 360;
+const cameraSwitchButton = document.getElementById("cameraswitch");
+const captureButton = document.getElementById('capture');
 
+window.addEventListener('DOMContentLoaded', function() {
+    facingModeCheck();
+    make();
+});
+
+
+cameraSwitchButton.addEventListener('click',()=> {
+    console.log("switch button click")
+    cameraSwitch()
+})
+
+captureButton.addEventListener('click',()=>{
+    console.log("capture button click")
+    capture();
+})
+
+function facingModeCheck(){
+    if (navigator.userAgentData.mobile){
+        constraints = {
+            audio: false, video: {facingMode: {exact: "environment"}}
+        }
+    }
+    else {
+        constraints = {
+            audio: false, video: true
+        }
+    }
+}
+
+function cameraSwitch() {
+    facing = !facing
+    constraints = {
+        audio: false, video: { facingMode: facing ? "user" : "environment" }
+    }
+    video = null;
+    make();
+}
+
+function capture(){
+    labels =[];
+    objects.forEach(object => labels.push(object['label']))
+    // console.log(labels)
+    kakaoTTS(labels)
+}
 
 async function make() {
     console.log("make")
     video = await getVideo();
     objectDetector = await ml5.objectDetector('cocossd', startDetecting)
 
-    canvas = createCanvas(width, height);
+    canvas = getCanvas(width, height);
     ctx = canvas.getContext('2d');
 }
-
-window.addEventListener('DOMContentLoaded', function() {
-    make();
-});
 
 function startDetecting(){
     console.log('model ready')
@@ -36,7 +83,6 @@ function startDetecting(){
 }
 
 function detect() {
-    let labels = []
     objectDetector.detect(video, function(err, results) {
         if(err){
             console.log(err);
@@ -45,16 +91,11 @@ function detect() {
         objects = results;
 
         if(objects){
-            objects.forEach(object => labels.push(object['label']))
             draw();
             // console.log(objects)
         }
+        detect();
 
-        // detect();
-        setTimeout(() =>{
-            kakaoTTS(labels),
-            detect();
-        },3000)
     });
 }
 
@@ -80,20 +121,11 @@ function draw(){
 
 // Helper Functions
 async function getVideo() {
-    // Grab elements, create settings, etc.
-    // const videoElement = document.createElement('video');
     const videoElement = document.getElementById('cameraVideo');
-    videoElement.setAttribute("style", "display: none;");
+    videoElement.setAttribute("style", "display: none");
     videoElement.width = width;
     videoElement.height = height;
     document.body.appendChild(videoElement);
-
-    // Create a webcam capture
-    let constraints = {
-        // this is cellphone rear camera
-        audio: false, video: { facingMode: { exact: "environment" } }
-        // audio: false, video: true
-    };
 
     const capture = await navigator.mediaDevices.getUserMedia(constraints)
     videoElement.srcObject = capture;
@@ -102,8 +134,8 @@ async function getVideo() {
     return videoElement
 }
 
-function createCanvas(w, h){
-    const canvas = document.createElement("canvas");
+function getCanvas(w, h){
+    const canvas = document.getElementById("drawCanvas");
     canvas.width  = w;
     canvas.height = h;
     document.body.appendChild(canvas);
